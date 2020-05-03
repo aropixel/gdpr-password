@@ -1,0 +1,38 @@
+.account__passwordChecker {
+    display: none;
+}
+
+.account__passwordChecker--strong,
+.account__passwordChecker--weak {
+    display: block;
+    position: relative;
+    font-size: 0.775rem;
+    padding: 0 10px;
+    margin-bottom: 30px;
+    &::after {
+        content: " ";
+        height: 2px;
+        width: calc(100% - 34px);
+        position: absolute;
+        bottom: -8px;
+        left: 10px;
+    }
+}
+
+
+
+/* 1.32 PWStrength */
+.account__passwordChecker--strong {
+    color: #54a000;
+    &::after {
+        background-color: #54a000;
+    }
+}
+
+/* 1.32 PWStrength */
+.account__passwordChecker--weak {
+    color: #ec420ed4;
+    &::after {
+        background-color: #ec420ed4;
+    }
+}
