@@ -9,6 +9,7 @@ export default class GdprPassword {
     constructor(elem, options){
 
         let defaultOptions = {
+            // 'form': false,
             'notification': {
                 'id': null,
                 'content': 'Saisissez au moins 8 caractères, sans espace, comportant au moins un chiffre, une lettre minuscule, une lettre majuscule et un caractère spécial.',
@@ -42,9 +43,27 @@ export default class GdprPassword {
         this.password =  typeof elem == 'string' ? document.getElementById(elem) : elem;
 
         //
+        this.form = null;
+        if (this.options.form) {
+            this.form =  typeof this.options.form == 'string' ? document.getElementById(this.options.form) : this.options.form;
+        }
+
+        //
         this.notification = null;
+        this.isStateOk = null;
+
+        this.updateState();
         this.initNotification();
         this.listenElement();
+    }
+
+    updateState() {
+        this.isStateOk =
+            (
+                (this.password.value.length && this.matchConditions()) ||
+                (!this.isRequired() && !this.password.value.length)
+            )
+        ;
     }
 
     initNotification() {
@@ -67,12 +86,19 @@ export default class GdprPassword {
 
         this.password.addEventListener('keyup', (event) => {
 
+
+            // Vérifie que le mot de passe correspond aux exigences.
             if (this.matchConditions()) {
 
-                // on donne une classe forte au champs mot de passe
                 this.notification.classList.remove('account__passwordChecker--weak');
-                this.notification.classList.add('account__passwordChecker--strong');
 
+                if (this.password.value.length) {
+                    // on donne une classe forte au champs mot de passe
+                    this.notification.classList.add('account__passwordChecker--strong');
+                }
+                else {
+                    this.notification.classList.remove('account__passwordChecker--strong');
+                }
 
             } else {
 
@@ -86,27 +112,57 @@ export default class GdprPassword {
 
             }
 
+            this.updateState();
+
         });
+
+        //
+        if (this.form) {
+
+            this.form.addEventListener('submit', (event) => {
+
+                if (!this.isStateOk) {
+                    event.preventDefault();
+                    return false;
+                }
+
+            });
+
+        }
+
     }
 
     matchConditions() {
 
         var match = true;
 
-        for (let [type, item] of Object.entries(this.checkers)) {
+        // Vérifie tous les checkers
+        // - si le champs est obligatoire
+        // - si le champs est facultatif ET renseigné
 
-            match &=
-                (item.condition === true && this.count(item.pattern)) ||
-                (item.condition && this.count(item.pattern) >= item.condition)
-            ;
+        if (this.isRequired() || this.password.value.length) {
+
+            for (let [type, item] of Object.entries(this.checkers)) {
+
+                match &=
+                    (item.condition === true && this.count(item.pattern)) ||
+                    (item.condition && this.count(item.pattern) >= item.condition)
+                ;
+
+            }
+
+            if (this.options.conditions.length) {
+                match &= this.password.value.length >= this.options.conditions.length;
+            }
 
         }
 
-        if (this.options.conditions.length) {
-            match &= this.password.value.length >= this.options.conditions.length;
-        }
 
         return match;
+    }
+
+    isRequired() {
+        return this.password.hasAttribute('required') && this.password.getAttribute('required') === 'required';
     }
 
     count(pat) {
