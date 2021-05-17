@@ -36,7 +36,7 @@ export default class GdprPassword {
             'number': {'condition': this.options.conditions.number, 'pattern': /\d+/},
             'lowercase': {'condition': this.options.conditions.lowercase, 'pattern': /[a-z]/},
             'uppercase': {'condition': this.options.conditions.uppercase, 'pattern': /[A-Z]/},
-            'specialchar': {'condition': this.options.conditions.specialchar, 'pattern': /[!@#\$%\^\&*\)\(+=._-]+/g},
+            'specialchar': {'condition': this.options.conditions.specialchar, 'pattern': /[!?@#\$%\^\&*\)\(+=._-]+/g},
         };
 
         //
