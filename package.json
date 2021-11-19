@@ -1,6 +1,6 @@
 {
   "name": "gdpr-password",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "VanillaJS plugin for GDPR password compliance",
   "main": "dist/gdpr-password.js",
   "scripts": {
