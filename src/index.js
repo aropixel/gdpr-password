@@ -12,7 +12,7 @@ export default class GdprPassword {
             // 'form': false,
             'notification': {
                 'id': null,
-                'content': 'Saisissez au moins 8 caractères, sans espace, comportant au moins un chiffre, une lettre minuscule, une lettre majuscule et un caractère spécial.',
+                'content': 'Saisissez au moins 8 caractères, sans espace, comportant au moins un chiffre, une lettre minuscule, une lettre majuscule et un caractère spécial (parmi cette liste : !?@#$§£€%°^()~&*+=.,;:/_-).',
             },
             'classes': {
                 'common': 'account__passwordChecker',
