@@ -12,7 +12,18 @@ export default class GdprPassword {
             // 'form': false,
             'notification': {
                 'id': null,
-                'content': 'Saisissez au moins 8 caractères, sans espace, comportant au moins un chiffre, une lettre minuscule, une lettre majuscule et un caractère spécial (parmi cette liste : !?@#$§£€%°^()~&*+=.,;:/_-).',
+                content: "" +
+                    "<div id='passwordError'>Mot de passe invalide</div>" +
+                    "<div id='passwordCheckerList'>" +
+                    "<strong>Votre mot de passe doit contenir :</strong>" +
+                    "<ul>" +
+                    "<li class='numeral'>8 caractères minimum</li>" +
+                    "<li class='uppercase'>1 majuscule minimum</li>" +
+                    "<li class='lowercase'>1 minuscule minimum</li>" +
+                    "<li class='number'>1 chiffre minimum</li>" +
+                    "<li class='specialchar'>1 caractère spécial minimum (!?@...)</li>" +
+                    "</ul>" +
+                    "</div>"
             },
             'classes': {
                 'common': 'account__passwordChecker',
@@ -78,45 +89,60 @@ export default class GdprPassword {
             this.notification.classList.add(this.options.classes.common)
             this.password.after(this.notification);
 
-
         }
     }
 
     listenElement() {
 
+        // Au clic dans le champ mdp, on affiche les recommandations
+        this.password.addEventListener("click", t => {
+
+            this.notification.style.display = "block";
+
+            if (!this.password.value.length) {
+                this.notification.innerHTML = this.options.notification.content
+            }
+
+            document.getElementById('passwordCheckerList').style.display = "block";
+            document.getElementById('passwordError').style.display = 'none';
+
+        })
+
+
+        // Lors de la saisie, on vérifie si le mdp est en erreur
         this.password.addEventListener('keyup', (event) => {
 
-
-            // Vérifie que le mot de passe correspond aux exigences.
             if (this.matchConditions()) {
-
-                this.notification.classList.remove('account__passwordChecker--weak');
-
-                if (this.password.value.length) {
-                    // on donne une classe forte au champs mot de passe
-                    this.notification.classList.add('account__passwordChecker--strong');
-                }
-                else {
-                    this.notification.classList.remove('account__passwordChecker--strong');
-                }
-
+                event.target.classList.remove('inputPasswordError');
             } else {
-
-                // on donne une classe faible au champs mot de passe
-                this.notification.style.display = '';
-                this.notification.classList.remove('account__passwordChecker--strong');
-                this.notification.classList.add('account__passwordChecker--weak');
-
-                // on affiche le message de validation
-                this.notification.innerHTML = this.options.notification.content;
-
+                event.target.classList.add('inputPasswordError');
             }
+
+            // on barre chaque consigne respectée au fur et à mesure de la saisie
+            this.crossMatchConditions()
 
             this.updateState();
 
         });
 
-        //
+        // Si l'utilisateur clique ailleurs, on cache la div des consignes de mdp
+        document.addEventListener("click", function(event) {
+
+            if (!event.target.getAttribute('data-gdpr')) {
+
+                document.getElementById('passwordCheckerList').style.display = "none";
+
+                // on affiche "mdp non valide" si les consignes sont fermées et que le mdp est invalide
+                if (document.querySelector('.inputPasswordError') && document.getElementById('passwordError')) {
+                    document.getElementById('passwordError').style.display = "block";
+                } else {
+                    document.getElementById('passwordError').style.display = "none";
+                }
+
+            }
+
+        })
+
         if (this.form) {
 
             this.form.addEventListener('submit', (event) => {
@@ -159,6 +185,36 @@ export default class GdprPassword {
 
 
         return match;
+    }
+
+    crossMatchConditions() {
+
+        if (this.isRequired() || this.password.value.length) {
+
+            for (let [type, n] of Object.entries(this.checkers)) {
+
+                let typeClass = document.querySelector('#passwordCheckerList .' + type);
+
+                if (n.condition && (this.count(n.pattern) !== 0)) {
+                    typeClass.style.textDecoration = 'line-through';
+                } else {
+                    typeClass.style.textDecoration = 'none';
+                }
+
+            }
+
+        }
+
+        if (this.password.value.length >= this.options.conditions.length) {
+
+            this.notification.querySelector('.numeral').style.textDecoration = 'line-through';
+
+        } else {
+
+            this.notification.querySelector('.numeral').style.textDecoration = "none";
+
+        }
+
     }
 
     isRequired() {

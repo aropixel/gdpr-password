@@ -36,3 +36,21 @@
         background-color: #ec420ed4;
     }
 }
+
+#passwordError {
+    margin-top: 5px;
+    color: red;
+    font-size: 12px;
+}
+
+#passwordCheckerList {
+    strong {
+        display: block;
+        margin: 10px 0 5px
+    }
+    ul {
+        list-style: none;
+        padding-left: 0;
+        line-height: 1.3;
+    }
+}
