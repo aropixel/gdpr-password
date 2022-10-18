@@ -95,7 +95,7 @@ export default class GdprPassword {
     listenElement() {
 
         // Au clic dans le champ mdp, on affiche les recommandations
-        this.password.addEventListener("click", t => {
+        this.password.addEventListener("focus", t => {
 
             this.notification.style.display = "block";
 
@@ -126,7 +126,7 @@ export default class GdprPassword {
         });
 
         // Si l'utilisateur clique ailleurs, on cache la div des consignes de mdp
-        document.addEventListener("click", function(event) {
+        document.addEventListener("focus", function(event) {
 
             if (!event.target.getAttribute('data-gdpr')) {
 
