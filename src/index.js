@@ -44,9 +44,9 @@ export default class GdprPassword {
 
         //
         this.checkers = {
-            'number': {'condition': this.options.conditions.number, 'pattern': /\d+/},
-            'lowercase': {'condition': this.options.conditions.lowercase, 'pattern': /[a-z]/},
-            'uppercase': {'condition': this.options.conditions.uppercase, 'pattern': /[A-Z]/},
+            'number': {'condition': this.options.conditions.number, 'pattern': /\d+/g},
+            'lowercase': {'condition': this.options.conditions.lowercase, 'pattern': /[a-z]/g},
+            'uppercase': {'condition': this.options.conditions.uppercase, 'pattern': /[A-Z]/g},
             'specialchar': {'condition': this.options.conditions.specialchar, 'pattern': /[!@#\$§£€%°\^\?~\&*\)\(+=.,;:/_-]+/g},
         };
 
@@ -171,7 +171,7 @@ export default class GdprPassword {
             for (let [type, item] of Object.entries(this.checkers)) {
 
                 match &=
-                    (item.condition === true && this.count(item.pattern)) ||
+                    (item.condition === true && this.count(item.pattern) > 0) ||
                     (item.condition && this.count(item.pattern) >= item.condition)
                 ;
 
