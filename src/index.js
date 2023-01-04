@@ -126,19 +126,16 @@ export default class GdprPassword {
         });
 
         // Si l'utilisateur clique ailleurs, on cache la div des consignes de mdp
-        document.addEventListener("focus", function(event) {
+        this.password.addEventListener("blur", (event) => {
 
-            if (!event.target.getAttribute('data-gdpr')) {
+            this.updateState();
+            document.getElementById('passwordCheckerList').style.display = "none";
 
-                document.getElementById('passwordCheckerList').style.display = "none";
-
-                // on affiche "mdp non valide" si les consignes sont fermées et que le mdp est invalide
-                if (document.querySelector('.inputPasswordError') && document.getElementById('passwordError')) {
-                    document.getElementById('passwordError').style.display = "block";
-                } else {
-                    document.getElementById('passwordError').style.display = "none";
-                }
-
+            // on affiche "mdp non valide" si les consignes sont fermées et que le mdp est invalide
+            if (!this.isStateOk) {
+                document.getElementById('passwordError').style.display = "block";
+            } else {
+                document.getElementById('passwordError').style.display = "none";
             }
 
         })
